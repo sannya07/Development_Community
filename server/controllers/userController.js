@@ -1,5 +1,6 @@
 import User from "../models/userModel.js";
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
 export const generateToken=(user)=>{
     return jwt.sign({user},process.env.JWT_SECRET)
@@ -16,12 +17,14 @@ export const registerUser=async(req,res)=>{
     if(exisitingUser){
         res.status(400).json("Already exists",exisitingUser);
     }
+
+    const hashedPassword=await bcrypt.hash(password,10);
     // create user
     const newUser=await User.create({
         firstname,
         lastname,
         email,
-        password
+        password:hashedPassword
     })
 
     await newUser.save();
@@ -29,8 +32,8 @@ export const registerUser=async(req,res)=>{
 
     res.status(201).json(
         {
-        message:"user created!",
-        token
+            message:"user created!",
+            token
         }
 
     )
@@ -47,6 +50,8 @@ export const loginUser=async(req,res)=>{
     if(!userExists){
         return res.status(400).json({message:"No user Found"});
     }
+    const isValid=await bcrypt.compare(password,userExists.password);
+    
     if(req.body.password!=userExists.password){
         console.log(req.body.password);
         return res.status(400).json({message:"Incorrect password"});
