@@ -1,4 +1,4 @@
-import Profile from "../models/profileModel";
+import Profile from "../models/profileModel.js";
 
 export const createProfile=async(req,res)=>{
     const {imageUrl,summary,skills,workExperience,linkedinUrl,githubUrl,codingPlatform,resumeUrl}=req.body;
@@ -13,7 +13,7 @@ export const createProfile=async(req,res)=>{
     })
     const data=await newProfile.save();
 
-    return res.status(400).json({
+    return res.status(201).json({
         message:"profile created!",
         data
     })

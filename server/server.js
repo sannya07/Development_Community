@@ -2,6 +2,8 @@ import express from 'express'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose';
 import Userrouter from './routes/userRoute.js';
+import Profilerouter from './routes/profileRoute.js';
+
 dotenv.config();
 
 const app=express()
@@ -12,6 +14,7 @@ app.use(express.json())
 // routes
 
 app.use('/api/user',Userrouter);
+app.use('/api/profile',Profilerouter);
 
 async function dbConnect(){
     try {
