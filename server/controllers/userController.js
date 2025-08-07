@@ -1,4 +1,9 @@
 import User from "../models/userModel.js";
+import jwt from 'jsonwebtoken';
+
+export const generateToken=(user)=>{
+    return jwt.sign({user},process.env.JWT_SECRET)
+}
 export const registerUser=async(req,res)=>{
     const {firstname, lastname, email, password}=req.body;
     // api-level validation
@@ -20,6 +25,33 @@ export const registerUser=async(req,res)=>{
     })
 
     await newUser.save();
-    res.status(201).json("user created!",{newUser})
+    const token=generateToken(newUser);
+
+    res.status(201).json(
+        {
+        message:"user created!",
+        token
+        }
+
+    )
+}
+
+export const loginUser=async(req,res)=>{
+    const{email, password}=req.body;
+    // validation
+    if(!email || !password){
+        return res.status(400).json({message:"Add all details"});
+    }
+    const userExists=await User.findOne({email});
+    console.log(userExists);
+    if(!userExists){
+        return res.status(400).json({message:"No user Found"});
+    }
+    if(req.body.password!=userExists.password){
+        console.log(req.body.password);
+        return res.status(400).json({message:"Incorrect password"});
+    }
+    const token=generateToken(userExists);
+    return res.status(200).json({message:'Logged in',token})
 }
 
