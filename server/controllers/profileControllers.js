@@ -27,3 +27,30 @@ export const getProfile=async(req,res)=>{
         data
     })
 }
+
+export const updateProfile = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Finding the profile
+        const profile = await Profile.findById(id);
+        if (!profile) {
+            return res.status(404).json({ message: "Profile not found" });
+        }
+
+        Object.assign(profile, req.body);
+        const updatedProfile = await profile.save();
+
+        return res.status(200).json({
+            message: "Profile updated successfully",
+            data: updatedProfile
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "Error updating profile",
+            error: error.message
+        });
+    }
+};

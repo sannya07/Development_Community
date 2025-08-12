@@ -1,6 +1,7 @@
 import User from "../models/userModel.js";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import profileModel from "../models/profileModel.js";
 
 export const generateToken=(user)=>{
     return jwt.sign({user},process.env.JWT_SECRET)
